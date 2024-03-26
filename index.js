@@ -6,7 +6,8 @@ import { URLSearchParams } from 'url'; // Import URLSearchParams for parsing que
 dotenv.config();
 
 const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
-const COLLECTION_ID = process.env.COLLECTION_ID; // Assuming this is the Places collection ID
+const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID; // Assuming this is the Places collection ID
+const USERS_COLLECTION_ID = process.env.USERS_COLLECTION_ID;
 
 // Global error handlers for uncaught exceptions and unhandled promise rejections
 process.on('uncaughtException', (error) => {
