@@ -1,6 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
+import express from 'express';
+import bodyParser from 'body-parser';
+import fetch from 'node-fetch';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -8,11 +9,13 @@ app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
   const { businessName, latitude, longitude, address } = req.body;
-  // Construct the payload for Webflow CMS
+  const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
+  const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
+
   const payload = {
     fields: {
       name: businessName,
-      slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59), // Example slug generation
+      slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
       _archived: false,
       _draft: false,
       latitude: latitude.toString(),
@@ -33,7 +36,7 @@ app.post('/api/save-location', async (req, res) => {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save to Webflow CMS');
+      throw new Error(`Failed to save to Webflow CMS: ${response.statusText}`);
     }
 
     const data = await response.json();
