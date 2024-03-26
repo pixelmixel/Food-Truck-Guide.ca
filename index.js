@@ -6,8 +6,14 @@ dotenv.config();
 const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 const COLLECTION_ID = process.env.COLLECTION_ID;
 
-// Example function to demonstrate usage
+// Enhanced function to demonstrate usage with better error handling and input validation
 async function postDataToWebflow(lat, lng, address) {
+  // Basic input validation (as an example, adjust according to your needs)
+  if (typeof lat !== 'string' || typeof lng !== 'string' || typeof address !== 'string') {
+    console.error('Invalid input types for lat, lng, or address');
+    return;
+  }
+
   const url = `https://api.webflow.com/collections/${COLLECTION_ID}/items`;
 
   try {
@@ -32,7 +38,8 @@ async function postDataToWebflow(lat, lng, address) {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to save to CMS: ${response.statusText}`);
+      const errorData = await response.json();
+      throw new Error(`Failed to save to CMS: ${response.statusText}, Details: ${JSON.stringify(errorData)}`);
     }
 
     const data = await response.json();
@@ -42,5 +49,5 @@ async function postDataToWebflow(lat, lng, address) {
   }
 }
 
-// Example usage
+// Example usage (uncomment and replace with actual data to use)
 // postDataToWebflow('45.4215', '-75.6972', 'Example Address');
