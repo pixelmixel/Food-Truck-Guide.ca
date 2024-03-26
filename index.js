@@ -1,9 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import fetch from 'node-fetch';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -50,3 +53,5 @@ app.post('/api/save-location', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
+
+
