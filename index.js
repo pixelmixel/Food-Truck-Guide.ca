@@ -1,37 +1,46 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
-const fetch = require('node-fetch');
+dotenv.config();
+
 const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 const COLLECTION_ID = process.env.COLLECTION_ID;
 
-exports.handler = async (event) => {
-  const { lat, lng, address } = JSON.parse(event.body);
+// Example function to demonstrate usage
+async function postDataToWebflow(lat, lng, address) {
   const url = `https://api.webflow.com/collections/${COLLECTION_ID}/items`;
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${WEBFLOW_API_TOKEN}`,
-      'Content-Type': 'application/json',
-      'accept-version': '1.0.0'
-    },
-    body: JSON.stringify({
-      fields: {
-        'name': 'Location Entry', // You might want to customize this
-        'slug': 'location-entry-' + Date.now(), // Ensure uniqueness
-        '_archived': false,
-        '_draft': false,
-        'latitude': lat,
-        'longitude': lng,
-        'address': address
-      }
-    })
-  });
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${WEBFLOW_API_TOKEN}`,
+        'Content-Type': 'application/json',
+        'accept-version': '1.0.0'
+      },
+      body: JSON.stringify({
+        fields: {
+          'name': 'Location Entry',
+          'slug': 'location-entry-' + Date.now(),
+          '_archived': false,
+          '_draft': false,
+          'latitude': lat,
+          'longitude': lng,
+          'address': address
+        }
+      })
+    });
 
-  if (!response.ok) {
-    // Handle error
-    return { statusCode: response.status, body: 'Failed to save to CMS' };
+    if (!response.ok) {
+      throw new Error(`Failed to save to CMS: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Successfully saved to CMS:', data);
+  } catch (error) {
+    console.error('Error:', error);
   }
+}
 
-  return { statusCode: 200, body: 'Successfully saved to CMS' };
-};
+// Example usage
+// postDataToWebflow('45.4215', '-75.6972', 'Example Address');
