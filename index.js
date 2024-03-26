@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import http from 'http';
+import { URLSearchParams } from 'url'; // Import URLSearchParams for parsing query parameters
 
 dotenv.config();
 
@@ -49,8 +50,10 @@ async function postDataToWebflow(lat, lng, address) {
 
     const data = await response.json();
     console.log('Successfully saved to CMS:', data);
+    return data; // Return the data for HTTP response
   } catch (error) {
     console.error('Error posting data to Webflow:', error);
+    throw error; // Rethrow the error for HTTP response
   }
 }
 
@@ -80,16 +83,48 @@ async function associateUserWithPlace(placeId, ownerId) {
 
     const data = await response.json();
     console.log('Successfully associated user with place:', data);
+    return data; // Return the data for HTTP response
   } catch (error) {
     console.error('Error associating user with place:', error);
+    throw error; // Rethrow the error for HTTP response
   }
 }
 
-// Basic HTTP server for health check endpoint
-const server = http.createServer((req, res) => {
+// Modify the HTTP server to handle new endpoints
+const server = http.createServer(async (req, res) => {
   if (req.url === '/health') {
     res.writeHead(200);
     res.end('OK');
+  } else if (req.url.startsWith('/post-data')) {
+    const params = new URLSearchParams(req.url.split('?')[1]);
+    const lat = params.get('lat');
+    const lng = params.get('lng');
+    const address = params.get('address');
+
+    try {
+      const data = await postDataToWebflow(lat, lng, address);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(data));
+    } catch (error) {
+      res.writeHead(500);
+      res.end(`Error: ${error.message}`);
+    }
+  } else if (req.url.startsWith('/associate-user')) {
+    const params = new URLSearchParams(req.url.split('?')[1]);
+    const placeId = params.get('placeId');
+    const ownerId = params.get('ownerId');
+
+    try {
+      const data = await associateUserWithPlace(placeId, ownerId);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(data));
+    } catch (error) {
+      res.writeHead(500);
+      res.end(`Error: ${error.message}`);
+    }
+  } else {
+    res.writeHead(404);
+    res.end('Not Found');
   }
 });
 
@@ -98,7 +133,3 @@ server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
   console.log('Application started. Ready to receive requests...');
 });
-
-// Example usage (uncomment and replace with actual data to use)
-// postDataToWebflow('45.4215', '-75.6972', 'Example Address');
-// associateUserWithPlace('place_item_id', 'user_item_id');
