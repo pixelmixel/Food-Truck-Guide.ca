@@ -7,7 +7,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
@@ -39,13 +38,16 @@ app.post('/api/save-location', async (req, res) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to save to Webflow CMS: ${response.statusText}`);
+      // Read the full error response body
+      const errorBody = await response.json();
+      console.error('Error saving to Webflow CMS:', errorBody);
+      return res.status(500).json({ success: false, error: errorBody });
     }
 
     const data = await response.json();
-    res.status(200).json({ success: true, data: data });
+    res.status(200).json({ success: true, data });
   } catch (error) {
-    console.error(error);
+    console.error('Error saving to Webflow CMS:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -53,5 +55,3 @@ app.post('/api/save-location', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
-
