@@ -21,7 +21,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Function to post data to Webflow (for Places)
 async function postDataToWebflow(lat, lng, address) {
   console.log('Attempting to post data to Webflow...');
-  const url = `https://api.webflow.com/collections/${COLLECTION_ID}/items`;
+  const url = `https://api.webflow.com/collections/${PLACES_COLLECTION_ID}/items`;
 
   try {
     const response = await fetch(url, {
@@ -60,7 +60,7 @@ async function postDataToWebflow(lat, lng, address) {
 
 // Function to associate a User ID as an ownerID for a Place
 async function associateUserWithPlace(placeId, ownerId) {
-  const url = `https://api.webflow.com/collections/${COLLECTION_ID}/items/${placeId}?live=true`;
+  const url = `https://api.webflow.com/collections/${USERS_COLLECTION_ID}/items/${placeId}?live=true`;
 
   try {
     const response = await fetch(url, {
