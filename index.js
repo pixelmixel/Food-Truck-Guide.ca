@@ -16,19 +16,17 @@ app.post('/api/save-location', async (req, res) => {
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
   // Prepare the payload with mandatory fields
-  let payload = {
+  const payload = {
     fields: {
       name: businessName,
-      slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
+      slug: slug,
       _archived: false,
       _draft: false,
-      address: String(address), // Assuming address is correctly provided as a string
+      address: addressAsString,
+      lat: parseFloat(lat), // Assuming lat is the field name in Webflow
+      lng: SparseFloat(lng), // Assuming lng is the field name in Webflow
     }
   };
-
-  // Conditionally add latitude and longitude if they are defined
-  if (latitude) payload.fields.latitude = String(latitude);
-  if (longitude) payload.fields.longitude = String(longitude);
 
   console.log('Making request to Webflow API with payload:', payload);
 
