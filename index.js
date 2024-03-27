@@ -31,9 +31,8 @@ app.post('/api/save-location', async (req, res) => {
       _archived: false,
       _draft: false,
       address: addressAsString,
-      // Temporarily comment out latitude and focus on longitude
-      // latitude: "-80.025173", // Hardcoded value for testing
-      longitude: "-80.025173", // Hardcoded value for testing
+      latitude: lat.toString(), // Include latitude from client-side
+      longitude: lng.toString(), // Include longitude from client-side
     }
   };
 
