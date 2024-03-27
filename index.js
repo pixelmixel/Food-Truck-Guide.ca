@@ -16,13 +16,14 @@ app.post('/api/save-location', async (req, res) => {
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
   // Prepare the payload with mandatory fields
-  let payload = {
+  const payload = {
     fields: {
       name: businessName,
       slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
       _archived: false,
       _draft: false,
-      address: String(address), // Assuming address is correctly provided as a string
+      address: addressAsString,
+      longitude: "-80.025173", // Hardcoded value for testing
     }
   };
 
