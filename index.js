@@ -10,11 +10,10 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
-  const { businessName, address } = req.body; // Removed latitude and longitude from destructuring
+  const { businessName, address } = req.body; // Note: latitude and longitude temporarily removed
   const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
-  // Adjusted payload to exclude latitude and longitude
   const payload = {
     fields: {
       name: businessName,
@@ -24,6 +23,8 @@ app.post('/api/save-location', async (req, res) => {
       address: address
     }
   };
+
+  console.log('Making request to Webflow API with payload:', payload);
 
   try {
     const response = await fetch(`https://api.webflow.com/collections/${PLACES_COLLECTION_ID}/items`, {
@@ -35,6 +36,8 @@ app.post('/api/save-location', async (req, res) => {
       },
       body: JSON.stringify(payload)
     });
+
+    console.log('Received response with status:', response.status);
 
     if (!response.ok) {
       const errorBody = await response.json();
@@ -49,4 +52,8 @@ app.post('/api/save-location', async (req, res) => {
     console.error('Error saving to Webflow CMS:', error);
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
