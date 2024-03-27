@@ -12,19 +12,27 @@ app.use(bodyParser.json());
 app.post('/api/save-location', async (req, res) => {
   const { businessName, address, lat, lng } = req.body;
 
+  // Generate slug from businessName
+  const slug = businessName.trim().includes(' ')
+                ? businessName.toLowerCase().replace(/\s+/g, '-').substring(0, 59)
+                : businessName.toLowerCase();
+
   const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
+
+  // Ensure address is treated as a string
+  const addressAsString = String(address);
 
   // Prepare the payload with mandatory fields
   const payload = {
     fields: {
       name: businessName,
-      slug: slug,
+      slug: slug, // Correctly defined slug
       _archived: false,
       _draft: false,
-      address: addressAsString,
-      lat: parseFloat(lat), // Assuming lat is the field name in Webflow
-      lng: SparseFloat(lng), // Assuming lng is the field name in Webflow
+      address: addressAsString, // Correctly defined addressAsString
+      lat: parseFloat(lat), // Assuming lat is the field name in Webflow and converting to float
+      lng: parseFloat(lng), // Assuming lng is the field name in Webflow and converting to float
     }
   };
 
