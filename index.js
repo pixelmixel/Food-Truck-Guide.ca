@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
-  const { businessName, address, lat, lng } = req.body;
+  const { businessName, address, lat } = req.body; // Exclude lng from destructuring
 
   // Generate slug from businessName
   const slug = businessName.trim().includes(' ')
@@ -23,7 +23,7 @@ app.post('/api/save-location', async (req, res) => {
   // Ensure address is treated as a string
   const addressAsString = String(address);
 
-  // Prepare the payload with mandatory fields
+  // Prepare the payload with mandatory fields, excluding lng
   const payload = {
     fields: {
       name: businessName,
@@ -32,7 +32,7 @@ app.post('/api/save-location', async (req, res) => {
       _draft: false,
       address: addressAsString, // Correctly defined addressAsString
       lat: parseFloat(lat), // Assuming lat is the field name in Webflow and converting to float
-      lng: parseFloat(lng), // Assuming lng is the field name in Webflow and converting to float
+      // lng: parseFloat(lng), // Commented out lng
     }
   };
 
