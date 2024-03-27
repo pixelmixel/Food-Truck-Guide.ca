@@ -10,31 +10,25 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
-  const { businessName, address /*, latitude, longitude */ } = req.body;
+  const { businessName, address, latitude, longitude } = req.body;
 
   const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
-  // Convert address to a string to ensure it's correctly formatted
-  const addressAsString = String(address);
-
-  // Create slug: replace spaces with hyphens only if there's more than one word
-  const slug = businessName.trim().includes(' ') 
-                ? businessName.toLowerCase().replace(/\s+/g, '-').substring(0, 59) 
-                : businessName.toLowerCase();
-
   // Prepare the payload with mandatory fields
-  const payload = {
+  let payload = {
     fields: {
       name: businessName,
-      slug: slug,
+      slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
       _archived: false,
       _draft: false,
-      address: addressAsString,
-      latitude: lat.toString(), // Include latitude from client-side
-      longitude: lng.toString(), // Include longitude from client-side
+      address: String(address), // Assuming address is correctly provided as a string
     }
   };
+
+  // Conditionally add latitude and longitude if they are defined
+  if (latitude) payload.fields.latitude = String(latitude);
+  if (longitude) payload.fields.longitude = String(longitude);
 
   console.log('Making request to Webflow API with payload:', payload);
 
@@ -64,4 +58,8 @@ app.post('/api/save-location', async (req, res) => {
     console.error('Error saving to Webflow CMS:', error);
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
