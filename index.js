@@ -10,23 +10,29 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
-  const { businessName, address, latitude, longitude } = req.body; // Include latitude and longitude in destructuring
+  const { businessName, address, latitude, longitude } = req.body;
 
   const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
-  // Adjusted payload to include latitude and longitude as strings
-  const payload = {
-    fields: {
-      name: businessName,
-      slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
-      _archived: false,
-      _draft: false,
-      address: address,
-      latitude: latitude.toString(), // Ensure latitude is converted to string
-      longitude: longitude.toString(), // Ensure longitude is converted to string
-    }
+  // Prepare fields object with mandatory fields
+  const fields = {
+    name: businessName,
+    slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
+    _archived: false,
+    _draft: false,
+    address: address
   };
+
+  // Add latitude and longitude to the fields object only if they are defined
+  if (latitude !== undefined) {
+    fields.latitude = latitude.toString();
+  }
+  if (longitude !== undefined) {
+    fields.longitude = longitude.toString();
+  }
+
+  const payload = { fields };
 
   console.log('Making request to Webflow API with payload:', payload);
 
