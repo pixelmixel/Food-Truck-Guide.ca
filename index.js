@@ -10,7 +10,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
-  const { businessName, address, lat } = req.body; // Exclude lng from destructuring
+  const { businessName, address, lat, long } = req.body; 
 
   // Generate slug from businessName
   const slug = businessName.trim().includes(' ')
@@ -23,18 +23,18 @@ app.post('/api/save-location', async (req, res) => {
   // Ensure address is treated as a string
   const addressAsString = String(address);
 
-  // Prepare the payload with mandatory fields, excluding lng
-  const payload = {
-    fields: {
-      name: businessName,
-      slug: slug, // Correctly defined slug
-      _archived: false,
-      _draft: false,
-      address: addressAsString, // Correctly defined addressAsString
-      lat: parseFloat(lat), // Assuming lat is the field name in Webflow and converting to float
-      // lng: parseFloat(lng), // Commented out lng
-    }
-  };
+ // Prepare the payload with mandatory fields
+const payload = {
+  fields: {
+    name: businessName,
+    slug: slug, // Correctly defined slug
+    _archived: false,
+    _draft: false,
+    address: addressAsString, // Correctly defined addressAsString
+    lat: parseFloat(lat), // Assuming lat is the field name in Webflow and converting to float
+    long: parseFloat(lng), // Change 'lng' to 'long' and converting to float
+  }
+};
 
   console.log('Making request to Webflow API with payload:', payload);
 
