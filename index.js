@@ -15,21 +15,20 @@ app.post('/api/save-location', async (req, res) => {
   const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
-  // Ensure address is treated as a string
-  // It seems address is being passed as a numeric value, hence the explicit conversion
-  const addressAsString = String(address);
-
-  const payload = {
+  // Prepare the payload with mandatory fields
+  let payload = {
     fields: {
       name: businessName,
       slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
       _archived: false,
       _draft: false,
-      address: addressAsString, // Ensure address is a string
-      latitude: String(latitude), // Convert latitude to string if not already
-      longitude: String(longitude), // Convert longitude to string if not already
+      address: String(address), // Assuming address is correctly provided as a string
     }
   };
+
+  // Conditionally add latitude and longitude if they are defined
+  if (latitude) payload.fields.latitude = String(latitude);
+  if (longitude) payload.fields.longitude = String(longitude);
 
   console.log('Making request to Webflow API with payload:', payload);
 
