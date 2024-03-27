@@ -10,10 +10,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/api/save-location', async (req, res) => {
-  const { businessName, address } = req.body; // Note: latitude and longitude temporarily removed
+  const { businessName, address, latitude, longitude } = req.body; // Include latitude and longitude in destructuring
+
   const PLACES_COLLECTION_ID = process.env.PLACES_COLLECTION_ID;
   const WEBFLOW_API_TOKEN = process.env.WEBFLOW_API_TOKEN;
 
+  // Adjusted payload to include latitude and longitude as strings
   const payload = {
     fields: {
       name: businessName,
@@ -21,8 +23,8 @@ app.post('/api/save-location', async (req, res) => {
       _archived: false,
       _draft: false,
       address: address,
-      latitude: latitude.toString(), // Convert to string
-      longitude: longitude.toString(), // Convert to string
+      latitude: latitude.toString(), // Ensure latitude is converted to string
+      longitude: longitude.toString(), // Ensure longitude is converted to string
     }
   };
 
