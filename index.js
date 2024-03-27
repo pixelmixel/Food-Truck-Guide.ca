@@ -27,6 +27,10 @@ app.post('/api/save-location', async (req, res) => {
   };
 
   try {
+    if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
+      return res.status(400).json({ success: false, error: "Invalid latitude or longitude" });
+    }
+    
     const response = await fetch(`https://api.webflow.com/collections/${PLACES_COLLECTION_ID}/items`, {
       method: 'POST',
       headers: {
@@ -36,12 +40,7 @@ app.post('/api/save-location', async (req, res) => {
       },
       body: JSON.stringify(payload)
     });
-
-    if (isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
-      return res.status(400).json({ success: false, error: "Invalid latitude or longitude" });
-    }
-    
-    if (!response.ok) {
+   if (!response.ok) {
       const errorBody = await response.json();
       console.error('Error saving to Webflow CMS:', errorBody);
       res.status(response.status).json({ success: false, error: errorBody });
