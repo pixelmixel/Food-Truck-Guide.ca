@@ -38,10 +38,10 @@ app.post('/api/save-location', async (req, res) => {
     });
 
     if (!response.ok) {
-      // Read the full error response body
       const errorBody = await response.json();
       console.error('Error saving to Webflow CMS:', errorBody);
-      return res.status(500).json({ success: false, error: errorBody });
+      res.status(response.status).json({ success: false, error: errorBody });
+      return;
     }
 
     const data = await response.json();
