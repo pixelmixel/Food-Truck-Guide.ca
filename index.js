@@ -20,7 +20,9 @@ app.post('/api/save-location', async (req, res) => {
       slug: businessName.toLowerCase().replace(/ /g, '-').substring(0, 59),
       _archived: false,
       _draft: false,
-      address: address
+      address: address,
+      latitude: latitude.toString(), // Convert to string
+      longitude: longitude.toString(), // Convert to string
     }
   };
 
